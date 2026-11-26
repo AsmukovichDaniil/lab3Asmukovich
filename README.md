@@ -33,7 +33,7 @@ docker run -p 5000:5000 -e ORDERFLOW_VARIANT=<your number> orderflow
 dotnet test
 ```
 
-runs every test project in the solution: the five smoke tests in `tests/OrderFlow.Smoke` and the domain tests in `tests/OrderFlow.Domain.Tests`. To run one project only:
+runs every test project in the solution: the five smoke tests in `tests/OrderFlow.Smoke` and 18 domain tests in `tests/OrderFlow.Domain.Tests`. To run one project only:
 
 ```
 dotnet test tests/OrderFlow.Domain.Tests
@@ -55,7 +55,7 @@ dotnet test tests/OrderFlow.Domain.Tests
 - `src/OrderFlow.Api` — web pages and API (ASP.NET Core)
 - `src/OrderFlow.Application`, `src/OrderFlow.Domain`, `src/OrderFlow.Infrastructure` — the layers behind it
 - `tests/OrderFlow.Smoke` — five smoke tests through the web host
-- `tests/OrderFlow.Domain.Tests` — the unit tests of the domain (release 1.2: five starter tests)
+- `tests/OrderFlow.Domain.Tests` — 18 domain tests for pricing and shipping rules, including AAA facts, theories, boundary cases, mutation checks, and FluentAssertions
 - `.github/workflows/ci.yml` — the CI workflow
 - `kit/PRODUCT.md` — the product description
 - `kit/requests.http` — a request notebook for the API
@@ -64,3 +64,8 @@ dotnet test tests/OrderFlow.Domain.Tests
 ## New in 1.2
 
 No functional changes. The solution now contains `tests/OrderFlow.Domain.Tests`, a unit-test project over `OrderFlow.Domain` with five starter tests, and the CI workflow is complete. Release 1.1 added the Outbox page and `GET /api/outbox`, the request log with error ids and `GET /api/log`, `POST /api/test/reset` and the *Reset demo data* button, the Support inbox (manager) and five more demo orders. See `kit/PRODUCT.md`.
+
+## Lab 3 deliverables
+
+- `reports/Lab3_Report.docx` — completed report for variant 2, with application screenshots.
+- `reports/screenshots/` — screenshots of the product catalog, manager orders page, and Swagger UI.
