@@ -12,54 +12,37 @@ public class PricingTests
         new OrderLine { ProductName = "Paper clip", UnitPrice = 0.10m, Quantity = 1 },
     };
 
-    [Fact]
-    public void A_regular_customer_gets_a_ten_percent_discount_over_one_thousand()
+    [Theory]
+    [InlineData(999.99, CustomerTier.Regular, false, 0.00)]
+    [InlineData(1000.00, CustomerTier.Regular, false, 0.00)]
+    [InlineData(1000.01, CustomerTier.Regular, false, 0.10)]
+    [InlineData(1000.01, CustomerTier.VIP, false, 0.15)]
+    [InlineData(1000.01, CustomerTier.VIP, true, 0.20)]
+    public void A_discount_rate_matches_the_order_amount_customer_tier_and_promotion(
+        decimal subtotal, CustomerTier tier, bool promoApplies, decimal expectedRate)
     {
         var rules = new PricingRules();
 
-        var rate = Pricing.DiscountRate(1200m, CustomerTier.Regular, false, rules);
+        var rate = Pricing.DiscountRate(subtotal, tier, promoApplies, rules);
 
-        Assert.Equal(0.10m, rate);
+        Assert.Equal(expectedRate, rate);
     }
 
-    [Fact]
-    public void A_vip_customer_gets_a_fifteen_percent_discount_over_one_thousand()
+    [Theory]
+    [InlineData(-1, 0)]
+    [InlineData(0, 0)]
+    [InlineData(100, 50)]
+    [InlineData(1500, 50)]
+    [InlineData(2000, 50)]
+    [InlineData(2000.01, 0)]
+    [InlineData(2500, 0)]
+    public void Shipping_cost_depends_on_the_amount(decimal amount, decimal expectedShipping)
     {
         var rules = new PricingRules();
 
-        var rate = Pricing.DiscountRate(1200m, CustomerTier.VIP, false, rules);
+        var shipping = Pricing.ShippingFor(amount, rules);
 
-        Assert.Equal(0.15m, rate);
-    }
-
-    [Fact]
-    public void A_vip_welcome_order_gets_a_twenty_percent_discount_over_one_thousand()
-    {
-        var rules = new PricingRules();
-
-        var rate = Pricing.DiscountRate(1200m, CustomerTier.VIP, true, rules);
-
-        Assert.Equal(0.20m, rate);
-    }
-
-    [Fact]
-    public void An_order_at_or_below_two_thousand_pays_fifty_for_shipping()
-    {
-        var rules = new PricingRules();
-
-        var shipping = Pricing.ShippingFor(2000m, rules);
-
-        Assert.Equal(50m, shipping);
-    }
-
-    [Fact]
-    public void An_order_over_two_thousand_gets_free_shipping()
-    {
-        var rules = new PricingRules();
-
-        var shipping = Pricing.ShippingFor(2000.01m, rules);
-
-        Assert.Equal(0m, shipping);
+        Assert.Equal(expectedShipping, shipping);
     }
 
     [Fact]
