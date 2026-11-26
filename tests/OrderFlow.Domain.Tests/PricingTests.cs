@@ -1,3 +1,4 @@
+using FluentAssertions;
 using OrderFlow.Domain;
 
 namespace OrderFlow.Domain.Tests;
@@ -25,7 +26,8 @@ public class PricingTests
 
         var rate = Pricing.DiscountRate(subtotal, tier, promoApplies, rules);
 
-        Assert.Equal(expectedRate, rate);
+        rate.Should().Be(expectedRate,
+            $"the documented threshold and {tier} rate with promo={promoApplies} produce that discount rate");
     }
 
     [Theory]
@@ -42,7 +44,8 @@ public class PricingTests
 
         var shipping = Pricing.ShippingFor(amount, rules);
 
-        Assert.Equal(expectedShipping, shipping);
+        shipping.Should().Be(expectedShipping,
+            $"shipping is free only when the amount is over the 2,000 threshold");
     }
 
     [Fact]
@@ -53,7 +56,7 @@ public class PricingTests
 
         var subtotal = Pricing.Subtotal(lines);
 
-        Assert.Equal(1200.10m, subtotal);
+        subtotal.Should().Be(1200.10m, "the added paper clip costs 0.10");
     }
 
     [Fact]
@@ -61,6 +64,8 @@ public class PricingTests
     {
         var sut = Pricing.Calculate(StandardOrder(), CustomerTier.Regular, false, new PricingRules());
 
-        Assert.Equal(new OrderTotals(1200m, 120m, 50m, 1080m, 226m, 1356m), sut);
+        sut.Should().Be(new OrderTotals(1200m, 120m, 50m, 1080m, 226m, 1356m),
+            "the subtotal is 1,200, the regular discount is 120, shipping is 50, and VAT is 20% of 1,130");
     }
+
 }
