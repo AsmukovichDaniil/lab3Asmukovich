@@ -68,4 +68,29 @@ public class PricingTests
             "the subtotal is 1,200, the regular discount is 120, shipping is 50, and VAT is 20% of 1,130");
     }
 
+    [Theory]
+    [InlineData(CustomerTier.Regular)]
+    [InlineData(CustomerTier.VIP)]
+    public void A_welcome_promo_gives_five_percent_below_the_discount_threshold_for_every_tier(CustomerTier tier)
+    {
+        var rules = new PricingRules();
+
+        var rate = Pricing.DiscountRate(500m, tier, true, rules);
+
+        rate.Should().Be(0.05m, "WELCOME adds five percent even below the order threshold, regardless of tier");
+    }
+
+    [Theory]
+    [InlineData(2000.01, CustomerTier.Regular)]
+    [InlineData(2100.00, CustomerTier.VIP)]
+    public void Shipping_uses_the_net_amount_after_discount(double subtotal, CustomerTier tier)
+    {
+        var lines = new List<OrderLine> { new() { UnitPrice = (decimal)subtotal, Quantity = 1 } };
+        var rules = new PricingRules();
+
+        var totals = Pricing.Calculate(lines, tier, false, rules);
+
+        totals.Shipping.Should().Be(50m,
+            $"after the {tier} discount, the net amount is below the 2,000 free-shipping threshold");
+    }
 }
