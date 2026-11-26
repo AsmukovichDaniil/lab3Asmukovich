@@ -67,5 +67,5 @@ No functional changes. The solution now contains `tests/OrderFlow.Domain.Tests`,
 
 ## Lab 3 deliverables
 
-- `reports/Lab3_Report.docx` — completed report for variant 2, with application screenshots.
+- `reports/Звіт_Лабораторна_3_зі_скриншотами.docx` — completed report for variant 2, with application screenshots.
 - `reports/screenshots/` — screenshots of the product catalog, manager orders page, and Swagger UI.
